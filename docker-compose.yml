@@ -2,27 +2,12 @@ version: "3.8"
 
 volumes:
   certs:
-    driver: local
-    driver_opts:
-       o: bind
-       type: none
-       device: /home/btadmin/data/certs
   esdata01:
-    driver: local
-    driver_opts:
-       o: bind
-       type: none
-       device: /home/btadmin/data/esdata01
   kibanadata:
-    driver: local
-    driver_opts:
-       o: bind
-       type: none
-       device: /home/btadmin/data/kibanadata
   
 services:
   setup:
-    image: ptseclsbtdkhu1.phatrasec.com/elk/elasticsearch:${STACK_VERSION}
+    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
     user: "0"
@@ -73,7 +58,7 @@ services:
     depends_on:
       setup:
         condition: service_healthy
-    image: ptseclsbtdkhu1.phatrasec.com/elk/elasticsearch:${STACK_VERSION}
+    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     restart: always
     labels:
       co.elastic.logs/module: elasticsearch
@@ -123,7 +108,7 @@ services:
     depends_on:
       es01:
         condition: service_healthy
-    image: ptseclsbtdkhu1.phatrasec.com/elk/kibana:${STACK_VERSION}
+    image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
     restart: always
     labels:
       co.elastic.logs/module: kibana
@@ -155,7 +140,7 @@ services:
   logstash:
     restart: always
     environment:
-      - xpack.monitoring.elasticsearch.url=https://192.168.12.130:9200
+      - xpack.monitoring.elasticsearch.url=https://172.18.0.5:9200
       - xpack.monitoring.enabled=true
     depends_on:
       es01:
